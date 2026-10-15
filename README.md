@@ -67,28 +67,31 @@ Detailed mode's headings/bullets)
 |---|---|---|
 | Frontend | React 19 + Vite | Fast dev experience, no unneeded SSR/routing |
 | Styling | Plain CSS-in-JS (template literal in App.jsx) | No extra build tooling needed for a single-page app |
-| LLM | Groq API (Llama 3.3 70B) | Low latency inference |
+| LLM | Groq API (High-speed open models: GPT-OSS-120B / Qwen 27B) | Sub-second latency inference with automatic model fallback |
 | PDF parsing | pdf.js (loaded via CDN import) | Runs entirely client-side, no file upload to a server needed |
-| YouTube transcripts | yt-transcript-api (public API) | Fetches captions without needing YouTube's own API key |
-| Backend | Vercel Serverless Function (`api/summarize.js`) | Keeps the Groq key off the client; zero extra server to manage |
-| Hosting | Vercel | Free tier, auto-deploys from GitHub, handles both static frontend + serverless function together |
+| YouTube transcripts | Serverless handler (`api/transcript.js`) | Fetches video captions without requiring YouTube OAuth |
+| Backend | Vercel Serverless Functions (`api/summarize.js`, `api/transcript.js`) | Keeps the Groq key secure; zero infrastructure management |
+| Hosting | Vercel | Free tier, auto-deploys from GitHub, handles static frontend + serverless functions |
 
 ## 5. Project structure
 
 ```
 my-summarizer/
 ├── api/
-│   └── summarize.js      # Serverless function — the ONLY place GROQ_API_KEY is read
+│   ├── summarize.js       # Serverless function — Groq completions with model fallback
+│   ├── transcript.js      # Serverless function — YouTube transcript extractor
+│   └── server.cjs         # Optional Express backend for local development
 ├── src/
-│   ├── App.jsx            # Everything: tabs, PDF/YouTube/text handling, UI, styling
-│   ├── main.jsx            # React entry point
+│   ├── App.jsx            # Core UI: tabs, PDF/YouTube/text handling, styling
+│   ├── main.jsx           # React entry point
 │   └── App.css / index.css
 ├── public/
-├── .env                    # LOCAL ONLY — never committed, holds GROQ_API_KEY
-├── .gitignore              # Must include `.env` — this is what keeps the key out of git
-├── vite.config.js
+├── .env                   # LOCAL ONLY — holds GROQ_API_KEY
+├── .gitignore             # Keeps .env safe from git
+├── vite.config.js         # Vite configuration with built-in dev API middleware
 └── package.json
 ```
+
 
 ## 6. Environment variables
 
